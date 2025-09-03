@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="pricelist_list_custom_redirect" inherit_id="website_sale.pricelist_list">
+        <xpath expr="//a[contains(@t-attf-href, '/shop/pricelist/')]" position="attributes">
+            <attribute name="t-attf-href" separator="?" remove="/shop/pricelist/{{ pl.id }}"/>
+            <attribute name="t-att-href">'/shop/change_pricelist/%s?redirect=%s' % (pl.id, request.httprequest.url)</attribute>
+        </xpath>
+    </template>
+
+    <template id="pricelist_selector_container" name="Pricelist Selector Container">
+        <div t-if="website.is_pricelist_selector_active and (not website.pricelist_visibility_group_id or user_id.has_group(website.pricelist_visibility_group_id.get_xml_id()[0]))"
+             class="o_pricelist_dropdown_container my-2">
+             <t t-call="website_sale.pricelist_list">
+                <t t-set="_classes" t-valuef="d-inline"/>
+             </t>
+        </div>
+    </template>
+
+    <template id="products_pricelist_display" inherit_id="website_sale.products">
+        <xpath expr="//div[hasclass('products_header')]" position="inside">
+            <t t-call="website_pricelist_visibility_manager.pricelist_selector_container"/>
+        </xpath>
+    </template>
+
+    <template id="product_pricelist_display" inherit_id="website_sale.product">
+        <xpath expr="//div[@id='product_details']/h1" position="after">
+            <t t-call="website_pricelist_visibility_manager.pricelist_selector_container"/>
+        </xpath>
+    </template>
+</odoo>
